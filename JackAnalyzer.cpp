@@ -28,46 +28,17 @@ vector<string> getJackFiles(string directoryName)
 }
 
 int main(int argc, char* argv[]){
-    vector<string> jackFiles;
-
-    jackFiles = getJackFiles(argv[1]);
+    vector<string> jackFiles = getJackFiles(argv[1]);
     
     ifstream jackFile;
-    jackFile.open("file.txt");
     ofstream xmlFile;
+    for (int i = 0; i < jackFiles.size(); i++)
+    {
+        cout << "\n**************NEXT CLASS**************\n" << endl;
+        jackFile.open(jackFiles[i]);
+        CompilationEngine parser(jackFile, xmlFile);
+        jackFile.close();
+    }
 
-    JackTokenizer tokenizer(jackFiles[2]);
-    CompilationEngine parser = CompilationEngine(jackFile, xmlFile);
-
-    cout << "Begin tokenization:" << endl;
-    while(tokenizer.hasMoreTokens()){
-    tokenizer.advance();
-
-    if (tokenizer.tokenType() == "KEYWORD")
-    {
-        tokenizer.keyWord();
-        cout << tokenizer.tokenType() << ": " << tokenizer.keyWord() << endl;
-    }
-    else if (tokenizer.tokenType() == "SYMBOL")
-    {
-        tokenizer.symbol();
-        cout << tokenizer.tokenType() << ": " << tokenizer.symbol() << endl;
-    }
-    else if (tokenizer.tokenType() == "INT_CONST")
-    {
-        tokenizer.intVal();
-        cout << tokenizer.tokenType() << ": " << tokenizer.intVal() << endl;
-    }
-    else if (tokenizer.tokenType() == "STRING_CONST")
-    {
-        tokenizer.stringVal();
-        cout << tokenizer.tokenType() << ": " << tokenizer.stringVal() << endl;
-    }
-    else if (tokenizer.tokenType() == "IDENTIFIER")
-    {
-        tokenizer.identifier();
-        cout << tokenizer.tokenType() << ": " << tokenizer.identifier() << endl;
-    }
-    }
     return 0;
 }

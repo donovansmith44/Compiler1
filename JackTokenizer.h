@@ -11,8 +11,8 @@ using namespace std;
 
 class JackTokenizer{
     public:
-    JackTokenizer();
-    JackTokenizer(string);
+    //JackTokenizer();
+    JackTokenizer(ifstream&);
     bool hasMoreTokens();
     void advance();
     string tokenType();

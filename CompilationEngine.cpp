@@ -8,14 +8,40 @@
 using namespace std;
 
     CompilationEngine::CompilationEngine(ifstream &jackInput, ofstream &xmlOutput){
-        // _xmlOutput = xmlOutput;
-        // _jackInput = jackInput;
-        // jackInput.open("file.txt");
-        string line;
-        while(getline(jackInput, line))
-        {
-            cout << line << endl;
+        JackTokenizer myTokenizer(jackInput);
+    
+        cout << "Begin tokenization:" << endl;
+
+        while(myTokenizer.hasMoreTokens()){
+            myTokenizer.advance();
+
+            if (myTokenizer.tokenType() == "KEYWORD")
+            {
+                myTokenizer.keyWord();
+                cout << myTokenizer.tokenType() << ": " << myTokenizer.keyWord() << endl;
+            }
+            else if (myTokenizer.tokenType() == "SYMBOL")
+            {
+                myTokenizer.symbol();
+                cout << myTokenizer.tokenType() << ": " << myTokenizer.symbol() << endl;
+            }
+            else if (myTokenizer.tokenType() == "INT_CONST")
+            {
+                myTokenizer.intVal();
+                cout << myTokenizer.tokenType() << ": " << myTokenizer.intVal() << endl;
+            }
+            else if (myTokenizer.tokenType() == "STRING_CONST")
+            {
+                myTokenizer.stringVal();
+                cout << myTokenizer.tokenType() << ": " << myTokenizer.stringVal() << endl;
+            }
+            else if (myTokenizer.tokenType() == "IDENTIFIER")
+            {
+                myTokenizer.identifier();
+                cout << myTokenizer.tokenType() << ": " << myTokenizer.identifier() << endl;
+            }
         }
+        
     }
     void CompilationEngine::CompileClass(){
         return;

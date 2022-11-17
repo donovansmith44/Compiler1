@@ -33,11 +33,11 @@ int main(int argc, char* argv[]){
     jackFiles = getJackFiles(argv[1]);
     
     ifstream jackFile;
+    jackFile.open("file.txt");
     ofstream xmlFile;
 
     JackTokenizer tokenizer(jackFiles[2]);
-
-    CompilationEngine parser(jackFile, xmlFile);
+    CompilationEngine parser = CompilationEngine(jackFile, xmlFile);
 
     cout << "Begin tokenization:" << endl;
     while(tokenizer.hasMoreTokens()){

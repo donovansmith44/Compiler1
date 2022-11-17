@@ -8,7 +8,9 @@
 using namespace std;
 
     CompilationEngine::CompilationEngine(ifstream &jackInput, ofstream &xmlOutput){
-        jackInput.open("file.txt");
+        // _xmlOutput = xmlOutput;
+        // _jackInput = jackInput;
+        // jackInput.open("file.txt");
         string line;
         while(getline(jackInput, line))
         {

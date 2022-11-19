@@ -10,15 +10,17 @@
 
 using namespace std;
 
-JackTokenizer::JackTokenizer(ifstream &fileName)
+JackTokenizer::JackTokenizer()
+{
+
+}
+JackTokenizer::JackTokenizer(ifstream &jackFile)
 {
         string line;
         commandNum = 0;
         currentToken = "";
-
-        //jackFile.open(fileName);
         
-        while(getline(fileName, line)) //we store all of the lines of Jack code into a vector
+        while(getline(jackFile, line)) //we store all of the lines of Jack code into a vector
         {
             jackLines.push_back(line);
         }

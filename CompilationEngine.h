@@ -29,6 +29,7 @@ class CompilationEngine{
     private:
     ifstream _jackInput;
     ofstream _xmlOutput;
+    JackTokenizer myTokenizer;
 };
 
 

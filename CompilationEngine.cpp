@@ -7,78 +7,165 @@
 
 using namespace std;
 
-    CompilationEngine::CompilationEngine(ifstream &jackInput, ofstream &xmlOutput){
-        JackTokenizer myTokenizer(jackInput);
-    
-        cout << "Begin tokenization:" << endl;
+    CompilationEngine::CompilationEngine(ifstream &jackInput, ofstream &xmlOutput)
+    {
+        myTokenizer = JackTokenizer(jackInput);
+    }
+    void CompilationEngine::CompileClass()
+    {
+        if (myTokenizer.hasMoreTokens()) //class declaration
+        {
+                myTokenizer.advance();
+                cout << "<class>" << endl;
+                cout << " <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+                myTokenizer.advance();
+                cout << " <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
+                myTokenizer.advance();
+                cout << " <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        }
 
-        while(myTokenizer.hasMoreTokens()){
+        while (myTokenizer.hasMoreTokens()) //compile classVarDec and subroutineDec
+        {
             myTokenizer.advance();
-
             if (myTokenizer.tokenType() == "KEYWORD")
             {
-                myTokenizer.keyWord();
-                cout << myTokenizer.tokenType() << ": " << myTokenizer.keyWord() << endl;
-            }
-            else if (myTokenizer.tokenType() == "SYMBOL")
+                if (myTokenizer.keyWord() == "static" | myTokenizer.keyWord() == "field")
+                {
+                    CompileClassVarDec();
+                }
+                else if(myTokenizer.keyWord() == "constructor" | myTokenizer.keyWord() == "function" | myTokenizer.keyWord() == "method")
+                {
+                    CompileSubroutine();
+                }
+            }            
+        }
+
+        cout << " <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        cout << "</class>" << endl;
+        return;
+    }
+    void CompilationEngine::CompileClassVarDec()
+    {
+        cout << "\n <classVarDec>" << endl;
+        cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        myTokenizer.advance();
+        while(myTokenizer.symbol() != ';')
+        {
+            if (myTokenizer.tokenType() == "KEYWORD")
             {
-                myTokenizer.symbol();
-                cout << myTokenizer.tokenType() << ": " << myTokenizer.symbol() << endl;
+                cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
             }
-            else if (myTokenizer.tokenType() == "INT_CONST")
+            else if(myTokenizer.tokenType() == "IDENTIFIER")
             {
-                myTokenizer.intVal();
-                cout << myTokenizer.tokenType() << ": " << myTokenizer.intVal() << endl;
+                cout << "  <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
             }
-            else if (myTokenizer.tokenType() == "STRING_CONST")
+            else if(myTokenizer.symbol() == ',')
             {
-                myTokenizer.stringVal();
-                cout << myTokenizer.tokenType() << ": " << myTokenizer.stringVal() << endl;
+                cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
             }
-            else if (myTokenizer.tokenType() == "IDENTIFIER")
+            myTokenizer.advance();
+        }
+        cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        cout << " </classVarDec>" << endl;
+        return;
+    }
+    void CompilationEngine::CompileSubroutine()
+    {
+        cout << "\n <subroutineDec>" << endl;
+        cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        myTokenizer.advance();
+        while (myTokenizer.symbol() != ')')
+        {
+            if (myTokenizer.tokenType() == "KEYWORD")
             {
-                myTokenizer.identifier();
-                cout << myTokenizer.tokenType() << ": " << myTokenizer.identifier() << endl;
+                cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+                myTokenizer.advance();
+            }
+            else if(myTokenizer.tokenType() == "IDENTIFIER")
+            {
+                cout << "  <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
+                myTokenizer.advance();
+            }
+            else if(myTokenizer.symbol() == '(')
+            {
+                cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+                compileParameterList();
             }
         }
-        
-    }
-    void CompilationEngine::CompileClass(){
+        cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        /*Compile subroutine body*/
+        cout << "  <subroutineBody>" << endl;
+        myTokenizer.advance();
+        cout << "   <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        while(myTokenizer.symbol() != '}')
+        {
+            if (myTokenizer.keyWord() == "var")
+            {
+                compileVarDec();
+            }
+            compileStatements();
+            myTokenizer.advance();
+        }
+        cout << "   <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        cout << "  </subroutineBody>" << endl;
+        cout << " </subroutineDec>" << endl;
         return;
     }
-    void CompilationEngine::CompileClassVarDec(){
+    void CompilationEngine::compileParameterList()
+    {
+        cout << "   <parameterList> "<< endl;
+        while (myTokenizer.symbol() != ')')
+        {
+            if (myTokenizer.tokenType() == "KEYWORD")
+            {
+                cout << "    <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+            }
+            else if(myTokenizer.tokenType() == "IDENTIFIER")
+            {
+                cout << "    <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
+            }
+            else if(myTokenizer.symbol() == ',')
+            {
+                cout << "    <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+            }
+            myTokenizer.advance();
+        }
+        cout << "   </parameterList> "<< endl;
         return;
     }
-    void CompilationEngine::CompileSubroutine(){
+    void CompilationEngine::compileVarDec()
+    {
         return;
     }
-    void CompilationEngine::compileParameterList(){
+    void CompilationEngine::compileStatements()
+    {
         return;
     }
-    void CompilationEngine::compileVarDec(){
+    void CompilationEngine::compileDo()
+    {
         return;
     }
-    void CompilationEngine::compileStatements(){
+    void CompilationEngine::compileLet()
+    {
         return;
     }
-    void CompilationEngine::compileDo(){
+    void CompilationEngine::compileWhile()
+    {
         return;
     }
-    void CompilationEngine::compileLet(){
+    void CompilationEngine::compileReturn()
+    {
         return;
     }
-    void CompilationEngine::compileWhile(){
+    void CompilationEngine::compileIf()
+    {
         return;
     }
-    void CompilationEngine::compileReturn(){
+    void CompilationEngine::CompileExpression()
+    {
         return;
     }
-    void CompilationEngine::compileIf(){
-        return;
-    }
-    void CompilationEngine::CompileExpression(){
-        return;
-    }
-    void CompilationEngine::CompileTerm(){
+    void CompilationEngine::CompileTerm()
+    {
         return;
     }

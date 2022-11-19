@@ -13,11 +13,11 @@ vector<string> getJackFiles(string directoryName)
 {
     vector<string> files;
 
-    std::string path(directoryName);
+    string path(directoryName);
 
-    std::string ext(".jack");
+    string ext(".jack");
 
-    for(auto &p : std::filesystem::recursive_directory_iterator(path))
+    for(auto &p : filesystem::recursive_directory_iterator(path))
     {
         if(p.path().extension() == ext)
         {
@@ -32,11 +32,13 @@ int main(int argc, char* argv[]){
     
     ifstream jackFile;
     ofstream xmlFile;
+    
     for (int i = 0; i < jackFiles.size(); i++)
     {
-        cout << "\n**************NEXT CLASS**************\n" << endl;
+        cout << "\n********NEXT CLASS********\n" << endl;
         jackFile.open(jackFiles[i]);
         CompilationEngine parser(jackFile, xmlFile);
+        parser.CompileClass();
         jackFile.close();
     }
 

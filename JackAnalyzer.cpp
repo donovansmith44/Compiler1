@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
         cout << "\n********NEXT CLASS********\n" << endl;
         jackFile.open(jackFiles[i]);
         CompilationEngine parser(jackFile, xmlFile);
-        parser.CompileClass();
+        parser.compileClass();
         jackFile.close();
     }
 

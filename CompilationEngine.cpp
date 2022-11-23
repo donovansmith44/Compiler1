@@ -11,7 +11,7 @@ using namespace std;
     {
         myTokenizer = JackTokenizer(jackInput);
     }
-    void CompilationEngine::CompileClass()
+    void CompilationEngine::compileClass()
     {
         if (myTokenizer.hasMoreTokens()) //class declaration
         {
@@ -31,11 +31,11 @@ using namespace std;
             {
                 if (myTokenizer.keyWord() == "static" | myTokenizer.keyWord() == "field")
                 {
-                    CompileClassVarDec();
+                    compileClassVarDec();
                 }
                 else if(myTokenizer.keyWord() == "constructor" | myTokenizer.keyWord() == "function" | myTokenizer.keyWord() == "method")
                 {
-                    CompileSubroutine();
+                    compileSubroutine();
                 }
             }            
         }
@@ -44,7 +44,7 @@ using namespace std;
         cout << "</class>" << endl;
         return;
     }
-    void CompilationEngine::CompileClassVarDec()
+    void CompilationEngine::compileClassVarDec()
     {
         cout << "\n <classVarDec>" << endl;
         cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
@@ -69,40 +69,36 @@ using namespace std;
         cout << " </classVarDec>" << endl;
         return;
     }
-    void CompilationEngine::CompileSubroutine()
+    void CompilationEngine::compileSubroutine()
     {
         cout << "\n <subroutineDec>" << endl;
         cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
         myTokenizer.advance();
-        while (myTokenizer.symbol() != ')')
-        {
-            if (myTokenizer.tokenType() == "KEYWORD")
-            {
-                cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
-                myTokenizer.advance();
-            }
-            else if(myTokenizer.tokenType() == "IDENTIFIER")
-            {
-                cout << "  <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
-                myTokenizer.advance();
-            }
-            else if(myTokenizer.symbol() == '(')
-            {
-                cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-                compileParameterList();
-            }
-        }
+
+        cout << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        myTokenizer.advance();
+
+        cout << "  <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
+        myTokenizer.advance();
+
         cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-        /*Compile subroutine body*/
+        myTokenizer.advance();
+        compileParameterList();
+
+        cout << "  <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+
+        /*compile subroutine body*/
         cout << "  <subroutineBody>" << endl;
         myTokenizer.advance();
         cout << "   <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
         
         myTokenizer.advance();
-        if (myTokenizer.keyWord() == "var")
+        while (myTokenizer.keyWord() == "var")
         {
             compileVarDec();
+            myTokenizer.advance();
         }
+
         compileStatements();
 
         cout << "   <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
@@ -162,27 +158,27 @@ using namespace std;
         cout << "   <statements> " << endl;
         while (myTokenizer.symbol() != '}')
         {
-            if (myTokenizer.keyWord() == "let")
+            if (myTokenizer.keyWord() == "let") //the currentToken should be ';' after the let statement compiles
             {
                 compileLet();
                 myTokenizer.advance();
             }
-            else if (myTokenizer.keyWord() == "if")
+            else if (myTokenizer.keyWord() == "if") //the currentToken should be the first token after the statement's closing '}' after the if statement compiles
             {
                 compileIf();
-                myTokenizer.advance();
+                
             }
-            else if (myTokenizer.keyWord() == "do")
+            else if (myTokenizer.keyWord() == "do") //the currentToken should be ';' after the do statement compiles
             {
                 compileDo();
                 myTokenizer.advance();
             }
-            else if (myTokenizer.keyWord() == "while")
+            else if (myTokenizer.keyWord() == "while") //the currentToken should be '}' after the while statement compiles
             {
                 compileWhile();
                 myTokenizer.advance();
             }
-            else if (myTokenizer.keyWord() == "return")
+            else if (myTokenizer.keyWord() == "return") //the currentToken should be ';' after the return statement compiles
             {
                 compileReturn();
                 myTokenizer.advance();
@@ -200,51 +196,71 @@ using namespace std;
         cout << "   </statements> " << endl;
         return;
     }
-    void CompilationEngine::compileDo()
+    void CompilationEngine::compileDo() 
     {
         cout << "    <doStatement> " << endl;
-        cout << "     <keyword> " << myTokenizer.keyWord() << "</keyword>" << endl;
         
+        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>"  << endl;
         myTokenizer.advance();
 
-        while (myTokenizer.symbol() != '(')
-        {
-            if (myTokenizer.tokenType() == "KEYWORD")
+            /*SUBROUTINE CALL*/
+            if (myTokenizer.tokenType() == "IDENTIFIER")
             {
-                cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+                cout << "     <identifier> " << myTokenizer.identifier() << " </identifier>"  << endl; //subroutineName
                 myTokenizer.advance();
-            }
-            else if (myTokenizer.tokenType() == "SYMBOL")
-            {
-                cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-                myTokenizer.advance();
-            }
-            else if (myTokenizer.tokenType() == "IDENTIFIER")
-            {
-                cout << "     <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
-                myTokenizer.advance();
-            }
-            else
-            {
-                myTokenizer.advance();
-            }
-        }
+                
+                if(myTokenizer.symbol() == '.') // '.' subRoutine Name '(' expressionList ')'
+                {
+                    cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '.'
+                    myTokenizer.advance();
 
-        CompileExpression();
-        myTokenizer.advance();
-        if (myTokenizer.symbol() == ';')
-        {
-            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-        }
-        
-        cout << "    </doStatement> " << endl;
+                    cout << "     <identifier> " << myTokenizer.identifier() << " </identifier>"  << endl; //subroutineName
+                    myTokenizer.advance();
+                }
+
+                    cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '('
+                    myTokenizer.advance();
+                    
+                    compileExpressionList();
+
+                    cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ')'
+                    myTokenizer.advance();
+            }
+
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ';'
+            
+            cout << "    </doStatement> " << endl;
         return;
     }
     void CompilationEngine::compileLet()
     {
         cout << "    <letStatement> " << endl;
-        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        
+        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>"  << endl;
         myTokenizer.advance();
+            
+        cout << "     <identifier> " << myTokenizer.identifier() << " </identifier>"  << endl; //subroutineName
+        myTokenizer.advance();
+
+        if (myTokenizer.symbol() == '[')
+        {
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '['
+            myTokenizer.advance();
+
+            compileExpression();
+            myTokenizer.advance();
+            
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ']'
+            myTokenizer.advance();
+        }
+        
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '='
+        myTokenizer.advance();
+
+        compileExpression();
+        myTokenizer.advance();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ';'
 
         cout << "    </letStatement> " << endl;
         return;
@@ -252,121 +268,180 @@ using namespace std;
     void CompilationEngine::compileWhile()
     {
         cout << "    <whileStatement> " << endl;
-        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        
+        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>"  << endl;
         myTokenizer.advance();
-        while (myTokenizer.symbol() !='}')
-        {
-            if (myTokenizer.tokenType() == "SYMBOL")
-            {
-                if (myTokenizer.symbol() == '(')
-                {
-                    //cout << "      <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-                    CompileExpression();
-                    myTokenizer.advance();
-                }
-                else if(myTokenizer.symbol() == '{')
-                {
-                    cout << "      <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-                    compileStatements();
-                    myTokenizer.advance();
-                }
-                else
-                {
-                    myTokenizer.advance();
-                }
-            }
-            else
-            {
-                myTokenizer.advance();
-            }
-        }
-        cout << "      <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '('
+        myTokenizer.advance();
+
+        compileExpression();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ')'
+        myTokenizer.advance();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '{'
+        myTokenizer.advance();
+
+        compileStatements();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '}'
+        
         cout << "    </whileStatement> " << endl;
         return;
     }
     void CompilationEngine::compileReturn()
     {
         cout << "    <returnStatement> " << endl;
-        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        
+        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>"  << endl;
         myTokenizer.advance();
-        while (myTokenizer.symbol() !=';')
+
+        if (myTokenizer.symbol() != ';')
         {
-            myTokenizer.advance();
+            compileExpression();
+            myTokenizer.advance();    
         }
-        cout << "     <symbol> " << myTokenizer.keyWord() << " </symbol>" << endl;
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ';'
+
         cout << "    </returnStatement> " << endl;
         return;
     }
     void CompilationEngine::compileIf()
     {
         cout << "    <ifStatement> " << endl;
-        cout << "      <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+        
+        cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>"  << endl;
         myTokenizer.advance();
-        CompileExpression();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '('
         myTokenizer.advance();
-        cout << "      <symbol> " << myTokenizer.keyWord() << " </symbol>" << endl;
+
+        compileExpression();
         myTokenizer.advance();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ')'
+        myTokenizer.advance();
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '{'
+        myTokenizer.advance();
+
         compileStatements();
-        cout << "      <symbol> " << myTokenizer.keyWord() << " </symbol>" << endl;
+
+        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '}'
         myTokenizer.advance();
+
         if (myTokenizer.keyWord() == "else")
         {
-            cout << "      <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+            cout << "     <keyword> " << myTokenizer.keyWord() << " </keyword>"  << endl;
             myTokenizer.advance();
-            cout << "      <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+            
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '{'
             myTokenizer.advance();
+
             compileStatements();
-            cout << "      <symbol> " << myTokenizer.keyWord() << " </symbol>" << endl;
+
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '}'
+            myTokenizer.advance();
         }
-        cout << "      <symbol> " << myTokenizer.keyWord() << " </symbol>" << endl;
+
         cout << "    </ifStatement> " << endl;
         return;
     }
-    void CompilationEngine::CompileExpression()
+    void CompilationEngine::compileExpression()
     {
-        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-        myTokenizer.advance();
-        cout << "      <expressionList> " << endl;
-        while (myTokenizer.symbol() != ')')
+        cout << "      <expression> " << endl;
+        
+        compileTerm();
+        
+        if (myTokenizer.symbol() == '+' | myTokenizer.symbol() == '-' | myTokenizer.symbol() == '*' | myTokenizer.symbol() == '/' | myTokenizer.symbol() == '&' | myTokenizer.symbol() == '|' | myTokenizer.symbol() == '<' | myTokenizer.symbol() == '>' | myTokenizer.symbol() == '=')
         {
-            if (myTokenizer.tokenType() == "KEYWORD")
-            {
-                cout << "      <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
-                myTokenizer.advance();
-            }
-            else if (myTokenizer.tokenType() == "SYMBOL")
-            {
-                cout << "       <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
-                myTokenizer.advance();
-            }
-            else if (myTokenizer.tokenType() == "IDENTIFIER")
-            {
-                cout << "       <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
-                myTokenizer.advance();
-            }
-            else
-            {
-                myTokenizer.advance();
-            }
+            myTokenizer.advance();
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // op
+
+            compileTerm();
+            
         }
-        cout << "      </expressionList> " << endl;
-        cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
+        else if(myTokenizer.symbol() == '(')
+        {
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '('
+            myTokenizer.advance();
+            compileTerm();
+            myTokenizer.advance();
+            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // op
+        }
+        
+        cout << "      </expression> " << endl;
+
         return;
     }
-    void CompilationEngine::CompileTerm()
+
+    void CompilationEngine::compileTerm()
     {
+        string tempToken = "";
+        cout << "       <term> " << endl;
         if (myTokenizer.tokenType() == "INT_CONST")
         {
-            /* code */
+            cout << "      <integerConstant> " << myTokenizer.intVal() << " </integerConstant> " << endl;
         }
         else if (myTokenizer.tokenType() == "STRING_CONST")
         {
-            /* code */
+            cout << "      <stringConstant> " << myTokenizer.stringVal() << " </stringConstant> " << endl;
         }
-        if (myTokenizer.keyWord() == "true" || myTokenizer.keyWord() == "false" || myTokenizer.keyWord() == "null" || myTokenizer.keyWord() == "this")
+        else if (myTokenizer.keyWord() == "true" | myTokenizer.keyWord() == "false" | myTokenizer.keyWord() == "null"  | myTokenizer.keyWord() == "this" )
         {
-            /* code */
+            cout << "      <keyword> " << myTokenizer.keyWord() << " </keyword> " << endl;
         }
+        else if (myTokenizer.tokenType() == "IDENTIFIER")
+        {
+            cout << "      <identifier> " << myTokenizer.identifier() << " </identifier> " << endl;
+
+            if (myTokenizer.getNext() == "[" | myTokenizer.getNext() == "(")
+            {
+                myTokenizer.advance();
+                
+                cout << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl; // '(' | '['
+                myTokenizer.advance();
+
+                compileExpression();
+
+                myTokenizer.advance();
+                
+                cout << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl; // ')' | ']'
+            }
+            else if(myTokenizer.getNext() == ".") //subroutineCall
+            {
+                myTokenizer.advance();
+                cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '.'
+                myTokenizer.advance();
+
+                cout << "     <identifier> " << myTokenizer.identifier() << " </identifier>"  << endl; //subroutineName
+                myTokenizer.advance();
+            
+
+                cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '('
+                myTokenizer.advance();
+                
+                compileExpressionList();
+
+                cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ')'
+            }
+        }
+        else if (myTokenizer.symbol() == '-' || myTokenizer.symbol() == '~') //unaryop term
+        {
+            cout << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl;
+            myTokenizer.advance();
+            compileTerm();
+        }        
+        cout << "       </term>" << endl;
         
+        return;
+    }
+    void CompilationEngine::compileExpressionList()
+    {
+        cout << "<expressionList> " << endl;
+        
+        cout << " </expressionList>" << endl;
         return;
     }

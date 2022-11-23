@@ -19,6 +19,7 @@ JackTokenizer::JackTokenizer(ifstream &jackFile)
         string line;
         commandNum = 0;
         currentToken = "";
+        nextToken = "";
         
         while(getline(jackFile, line)) //we store all of the lines of Jack code into a vector
         {
@@ -40,7 +41,15 @@ void JackTokenizer::advance()
 {
     currentToken = jackTokens[commandNum];
     commandNum++;
+    if (hasMoreTokens())
+    {
+        nextToken = jackTokens[commandNum];
+    }
     return;
+}
+string JackTokenizer::getNext()
+{
+    return nextToken;
 }
 string JackTokenizer::tokenType()
 {

@@ -31,6 +31,7 @@ class JackTokenizer{
     bool isStringConstant(string);
     bool isIntConstant(string);
     vector<string> Tokenize(string);
+    string getNext();
     private:
     ifstream jackFile;
     ofstream xmlFile;
@@ -38,6 +39,7 @@ class JackTokenizer{
     vector<string> jackLines;
     vector<string> jackTokens;
     int commandNum;
+    string nextToken;
 };
 
 

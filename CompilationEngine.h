@@ -13,9 +13,9 @@ class CompilationEngine{
     public:
     CompilationEngine();
     CompilationEngine(ifstream&, ofstream&);
-    void CompileClass();
-    void CompileClassVarDec();
-    void CompileSubroutine();
+    void compileClass();
+    void compileClassVarDec();
+    void compileSubroutine();
     void compileParameterList();
     void compileVarDec();
     void compileStatements();
@@ -24,8 +24,9 @@ class CompilationEngine{
     void compileWhile();
     void compileReturn();
     void compileIf();
-    void CompileExpression();
-    void CompileTerm();
+    void compileExpression();
+    void compileTerm();
+    void compileExpressionList();
     private:
     ifstream _jackInput;
     ofstream _xmlOutput;

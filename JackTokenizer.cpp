@@ -171,29 +171,42 @@ vector<string> JackTokenizer::removeBlockComments(vector<string> tokens)
 vector<string> JackTokenizer::appendStringLiterals(vector<string> tokens)
 {
     string temp = "";
+    string temp2 = "";
+
     for (int i = 0; i < tokens.size(); i++)
     {
         temp = tokens[i];
-        if (temp.find('"') != string::npos)
+        temp2 = temp;
+        
+        if (temp.find('"') != string::npos) //if we find an opening double quote
         {
-            for (int j = i+1; j < tokens.size(); j++)
+            temp2.erase(temp2.begin() + temp2.find('"'));
+            if (temp2.find('"') != string::npos) //and a closing double quote
             {
-                if(tokens[j].find('"') != string::npos)
+                tokens[i] = temp;
+            }
+            else
+            {
+                for (int j = i+1; j < tokens.size(); j++)
                 {
-                    temp += " " + tokens[j];
-                    tokens[i] = temp;
-                    tokens.erase(tokens.begin() + j);
-                    break;
+                    if(tokens[j].find('"') != string::npos) //if we find the closing double quote
+                    {
+                        temp += " " + tokens[j];
+                        tokens[i] = temp;
+                        tokens[j] = " ";
+                        break;
+                    }
+                    else
+                    {
+                        temp += " " + tokens[j];
+                        tokens[j] = " ";
+                    }
                 }
-                else
-                {
-                    temp += " " + tokens[j];
-                    tokens.erase(tokens.begin() + j);
-                }
-            }   
+            }
         }
+        temp = "";
+        
     }
-       
     return tokens;
 }
 bool JackTokenizer::isKeyword(string line)
@@ -283,9 +296,10 @@ vector<string> JackTokenizer::Tokenize(string line)
     for (int i = 0; i < tokens.size(); i++) //remove the blank elements from the vector
     {
         string temp = tokens[i];
-        if (isspace(temp[0]))
+        if (isspace(temp[0]) | temp == " ")
         {
             tokens.erase(tokens.begin() + i);
+            i--;
         }    
     }
     

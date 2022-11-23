@@ -12,7 +12,7 @@ using namespace std;
 class CompilationEngine{
     public:
     CompilationEngine();
-    CompilationEngine(ifstream&, ofstream&);
+    CompilationEngine(ifstream&, string);
     void compileClass();
     void compileClassVarDec();
     void compileSubroutine();

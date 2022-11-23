@@ -27,19 +27,34 @@ vector<string> getJackFiles(string directoryName)
     return files;
 }
 
+string getJackFileName(string jackFile)
+{
+    if (jackFile.find('/') != string::npos)
+    {
+        jackFile.erase(0, jackFile.find('/')+1);
+    }
+    if (jackFile.find('.') != string::npos)
+    {
+        jackFile.erase(jackFile.find('.'), jackFile.length() - jackFile.find('.'));
+    }
+    return jackFile;
+}
+
 int main(int argc, char* argv[]){
     vector<string> jackFiles = getJackFiles(argv[1]);
     
     ifstream jackFile;
     ofstream xmlFile;
+    string xmlFileName = "";
     
     for (int i = 0; i < jackFiles.size(); i++)
     {
-        cout << "\n********NEXT CLASS********\n" << endl;
+        //cout << "\n********NEXT CLASS********\n" << endl;
         jackFile.open(jackFiles[i]);
-        CompilationEngine parser(jackFile, xmlFile);
+        CompilationEngine parser(jackFile, getJackFileName(jackFiles[i]) + ".xml");
         parser.compileClass();
         jackFile.close();
+        xmlFile.close();
     }
 
     return 0;

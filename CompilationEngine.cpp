@@ -355,23 +355,13 @@ using namespace std;
         
         compileTerm();
         
-        if (myTokenizer.symbol() == '+' | myTokenizer.symbol() == '-' | myTokenizer.symbol() == '*' | myTokenizer.symbol() == '/' | myTokenizer.symbol() == '&' | myTokenizer.symbol() == '|' | myTokenizer.symbol() == '<' | myTokenizer.symbol() == '>' | myTokenizer.symbol() == '=')
+        if (myTokenizer.getNext() == "+" | myTokenizer.getNext() == "-" | myTokenizer.getNext() == "*" | myTokenizer.getNext() == "/" | myTokenizer.getNext() == "&" | myTokenizer.getNext() == "|" | myTokenizer.getNext() == "<" | myTokenizer.getNext() == ">" | myTokenizer.getNext() == "=")
         {
             myTokenizer.advance();
             cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // op
-
-            compileTerm();
-            
-        }
-        else if(myTokenizer.symbol() == '(')
-        {
-            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '('
             myTokenizer.advance();
-            compileTerm();
-            myTokenizer.advance();
-            cout << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // op
+            compileTerm();   
         }
-        
         cout << "      </expression> " << endl;
 
         return;
@@ -433,6 +423,14 @@ using namespace std;
             cout << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl;
             myTokenizer.advance();
             compileTerm();
+        }
+        else if (myTokenizer.symbol() == '(') //'(' expression ')'
+        {
+            cout << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl;
+            myTokenizer.advance();
+            compileExpression();
+            myTokenizer.advance();
+            cout << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl;
         }        
         cout << "       </term>" << endl;
         

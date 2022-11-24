@@ -360,7 +360,23 @@ using namespace std;
         if (myTokenizer.getNext() == "+" | myTokenizer.getNext() == "-" | myTokenizer.getNext() == "*" | myTokenizer.getNext() == "/" | myTokenizer.getNext() == "&" | myTokenizer.getNext() == "|" | myTokenizer.getNext() == "<" | myTokenizer.getNext() == ">" | myTokenizer.getNext() == "=")
         {
             myTokenizer.advance();
-            _xmlOutput << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // op
+            if (myTokenizer.symbol() == '<')
+            {
+                _xmlOutput << "     <symbol> " <<  "&lt;" << " </symbol>"  << endl;
+            }
+            else if (myTokenizer.symbol() == '>')
+            {
+                _xmlOutput << "     <symbol> " <<  "&gt;" << " </symbol>"  << endl;
+            }
+            else if (myTokenizer.symbol() == '&')
+            {
+                _xmlOutput << "     <symbol> " <<  "&amp;" << " </symbol>"  << endl;
+            }
+            else
+            {
+                _xmlOutput << "     <symbol>" << myTokenizer.symbol() << "</symbol>"  << endl; // op
+            }
+            
             myTokenizer.advance();
             compileTerm();   
         }

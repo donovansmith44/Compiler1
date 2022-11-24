@@ -374,7 +374,7 @@ using namespace std;
             }
             else
             {
-                _xmlOutput << "     <symbol>" << myTokenizer.symbol() << "</symbol>"  << endl; // op
+                _xmlOutput << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // op
             }
             
             myTokenizer.advance();
@@ -475,7 +475,6 @@ using namespace std;
                 }   
             }
         }
-
         _xmlOutput << "      </expressionList>" << endl;
         return;
     }

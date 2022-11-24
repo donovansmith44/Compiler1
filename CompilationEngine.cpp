@@ -77,8 +77,16 @@ using namespace std;
         _xmlOutput << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
         myTokenizer.advance();
 
-        _xmlOutput << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
-        myTokenizer.advance();
+        if(myTokenizer.tokenType() == "IDENTIFIER")
+        {
+            _xmlOutput << "  <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
+            myTokenizer.advance();
+        }
+        else if (myTokenizer.tokenType() == "KEYWORD")
+        {
+            _xmlOutput << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
+            myTokenizer.advance();
+        }
 
         _xmlOutput << "  <identifier> " << myTokenizer.identifier() << " </identifier>" << endl;
         myTokenizer.advance();
@@ -95,6 +103,7 @@ using namespace std;
         _xmlOutput << "   <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
         
         myTokenizer.advance();
+
         while (myTokenizer.keyWord() == "var")
         {
             compileVarDec();
@@ -407,7 +416,7 @@ using namespace std;
         {
             _xmlOutput << "      <identifier> " << myTokenizer.identifier() << " </identifier> " << endl;
 
-            if (myTokenizer.getNext() == "[" | myTokenizer.getNext() == "(")
+            if (myTokenizer.getNext() == "[" | myTokenizer.getNext() == "(") //array or variable
             {
                 myTokenizer.advance();
                 

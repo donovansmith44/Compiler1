@@ -44,17 +44,13 @@ int main(int argc, char* argv[]){
     vector<string> jackFiles = getJackFiles(argv[1]);
     
     ifstream jackFile;
-    ofstream xmlFile;
-    string xmlFileName = "";
     
     for (int i = 0; i < jackFiles.size(); i++)
     {
-        //cout << "\n********NEXT CLASS********\n" << endl;
         jackFile.open(jackFiles[i]);
         CompilationEngine parser(jackFile, getJackFileName(jackFiles[i]) + ".xml");
         parser.compileClass();
         jackFile.close();
-        xmlFile.close();
     }
 
     return 0;

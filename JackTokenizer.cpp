@@ -41,7 +41,7 @@ void JackTokenizer::advance()
 {
     currentToken = jackTokens[commandNum];
     commandNum++;
-    if (hasMoreTokens())
+    if (hasMoreTokens()) //it's useful to have a string that holds the token after the current one when compiling particular syntactic elements
     {
         nextToken = jackTokens[commandNum];
     }

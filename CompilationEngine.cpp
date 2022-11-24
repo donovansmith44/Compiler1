@@ -25,7 +25,7 @@ using namespace std;
                 _xmlOutput << " <symbol> " << myTokenizer.symbol() << " </symbol>" << endl;
         }
 
-        while (myTokenizer.hasMoreTokens()) //compile classVarDec and subroutineDec
+        while (myTokenizer.hasMoreTokens())//compile classVarDec and subroutineDec
         {
             myTokenizer.advance();
             if (myTokenizer.tokenType() == "KEYWORD")
@@ -367,7 +367,7 @@ using namespace std;
         
         compileTerm();
         
-        if (myTokenizer.getNext() == "+" | myTokenizer.getNext() == "-" | myTokenizer.getNext() == "*" | myTokenizer.getNext() == "/" | myTokenizer.getNext() == "&" | myTokenizer.getNext() == "|" | myTokenizer.getNext() == "<" | myTokenizer.getNext() == ">" | myTokenizer.getNext() == "=")
+        if (myTokenizer.getNextToken() == "+" | myTokenizer.getNextToken() == "-" | myTokenizer.getNextToken() == "*" | myTokenizer.getNextToken() == "/" | myTokenizer.getNextToken() == "&" | myTokenizer.getNextToken() == "|" | myTokenizer.getNextToken() == "<" | myTokenizer.getNextToken() == ">" | myTokenizer.getNextToken() == "=")
         {
             myTokenizer.advance();
             if (myTokenizer.symbol() == '<')
@@ -391,7 +391,6 @@ using namespace std;
             compileTerm();   
         }
         _xmlOutput << "      </expression> " << endl;
-
         return;
     }
 
@@ -406,7 +405,7 @@ using namespace std;
         else if (myTokenizer.tokenType() == "STRING_CONST")
         {
             tempToken = myTokenizer.stringVal();
-            if(tempToken.find('"') != string::npos)
+            if(tempToken.find('"') != string::npos) //string constants are identified with a opening and closing '"'. Remove them for compilation
             {
                 tempToken.erase(tempToken.find('"'));
             }
@@ -424,7 +423,7 @@ using namespace std;
         {
             _xmlOutput << "      <identifier> " << myTokenizer.identifier() << " </identifier> " << endl;
 
-            if (myTokenizer.getNext() == "[" | myTokenizer.getNext() == "(") //array or variable
+            if (myTokenizer.getNextToken() == "[" | myTokenizer.getNextToken() == "(") //array or variable
             {
                 myTokenizer.advance();
                 
@@ -437,7 +436,7 @@ using namespace std;
                 
                 _xmlOutput << "      <symbol> " << myTokenizer.symbol() << " </symbol> " << endl; // ')' | ']'
             }
-            else if(myTokenizer.getNext() == ".") //subroutineCall
+            else if(myTokenizer.getNextToken() == ".") //subroutineCall
             {
                 myTokenizer.advance();
                 _xmlOutput << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '.'

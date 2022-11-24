@@ -47,7 +47,7 @@ void JackTokenizer::advance()
     }
     return;
 }
-string JackTokenizer::getNext()
+string JackTokenizer::getNextToken()
 {
     return nextToken;
 }
@@ -183,13 +183,13 @@ vector<string> JackTokenizer::appendStringLiterals(vector<string> tokens)
             temp2.erase(temp2.begin() + temp2.find('"'));
             if (temp2.find('"') != string::npos) //and a closing double quote
             {
-                tokens[i] = temp;
+                tokens[i] = temp; //store the entire string constant to the list of tokens
             }
             else
             {
                 for (int j = i+1; j < tokens.size(); j++)
                 {
-                    if(tokens[j].find('"') != string::npos) //if we find the closing double quote
+                    if(tokens[j].find('"') != string::npos) //if we find the closing double quote, then we have found the end of the string constant.
                     {
                         temp += " " + tokens[j];
                         tokens[i] = temp;
@@ -198,7 +198,7 @@ vector<string> JackTokenizer::appendStringLiterals(vector<string> tokens)
                     }
                     else
                     {
-                        temp += " " + tokens[j];
+                        temp += " " + tokens[j]; //append the next portion of the string constant
                         tokens[j] = " ";
                     }
                 }
@@ -252,6 +252,7 @@ void JackTokenizer::clean() //remove comments and unnecessary whitespace lines
     
     return;
 }
+
 vector<string> JackTokenizer::Tokenize(string line)
 {
     int i = 0;

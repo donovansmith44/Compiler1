@@ -362,15 +362,15 @@ using namespace std;
             myTokenizer.advance();
             if (myTokenizer.symbol() == '<')
             {
-                _xmlOutput << "     <symbol> " <<  "&lt;" << " </symbol>"  << endl; // op
+                _xmlOutput << "     <symbol> " <<  "&lt;" << " </symbol>"  << endl;
             }
             else if (myTokenizer.symbol() == '>')
             {
-                _xmlOutput << "     <symbol> " <<  "&gt;" << " </symbol>"  << endl; // op
+                _xmlOutput << "     <symbol> " <<  "&gt;" << " </symbol>"  << endl;
             }
             else if (myTokenizer.symbol() == '&')
             {
-                _xmlOutput << "     <symbol> " <<  "&amp;" << " </symbol>"  << endl; // op
+                _xmlOutput << "     <symbol> " <<  "&amp;" << " </symbol>"  << endl;
             }
             else
             {

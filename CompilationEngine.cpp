@@ -48,7 +48,7 @@ using namespace std;
     }
     void CompilationEngine::compileClassVarDec()
     {
-        _xmlOutput << "\n <classVarDec>" << endl;
+        _xmlOutput << "<classVarDec>" << endl;
         _xmlOutput << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
         myTokenizer.advance();
         while(myTokenizer.symbol() != ';')
@@ -73,7 +73,7 @@ using namespace std;
     }
     void CompilationEngine::compileSubroutine()
     {
-        _xmlOutput << "\n <subroutineDec>" << endl;
+        _xmlOutput << "<subroutineDec>" << endl;
         _xmlOutput << "  <keyword> " << myTokenizer.keyWord() << " </keyword>" << endl;
         myTokenizer.advance();
 
@@ -119,7 +119,7 @@ using namespace std;
     }
     void CompilationEngine::compileParameterList()
     {
-        _xmlOutput << "   <parameterList> ";
+        _xmlOutput << "   <parameterList> " << endl;
         while (myTokenizer.symbol() != ')')
         {
             if (myTokenizer.tokenType() == "KEYWORD")
@@ -288,11 +288,12 @@ using namespace std;
 
         compileExpression();
 
+        myTokenizer.advance();
         _xmlOutput << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // ')'
+
         myTokenizer.advance();
 
         _xmlOutput << "     <symbol> " << myTokenizer.symbol() << " </symbol>"  << endl; // '{'
-        myTokenizer.advance();
 
         compileStatements();
 
@@ -405,7 +406,14 @@ using namespace std;
         else if (myTokenizer.tokenType() == "STRING_CONST")
         {
             tempToken = myTokenizer.stringVal();
-            tempToken = tempToken.substr(0, tempToken.length()-2);
+            if(tempToken.find('"') != string::npos)
+            {
+                tempToken.erase(tempToken.find('"'));
+            }
+            if(tempToken.find('"') != string::npos)
+            {
+                tempToken.erase(tempToken.find('"'));
+            }
             _xmlOutput << "      <stringConstant> " << tempToken << " </stringConstant> " << endl;
         }
         else if (myTokenizer.keyWord() == "true" | myTokenizer.keyWord() == "false" | myTokenizer.keyWord() == "null"  | myTokenizer.keyWord() == "this" )
